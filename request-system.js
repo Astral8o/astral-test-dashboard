@@ -240,7 +240,7 @@
 
     insertSubmission(payload)
       .then(function () {
-        return notifyOwner({ type: 'booking', site_id: payload.site_id, name: payload.name, service_type: payload.service_type });
+        return notifyOwner({ type: 'booking', site_id: payload.site_id, name: payload.name, service_type: payload.service_type, client_email: payload.email });
       })
       .then(function () {
         showConfirm();

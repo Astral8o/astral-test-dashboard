@@ -117,7 +117,7 @@
       return fetch('/api/notify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: 'inquiry', site_id: payload.site_id, name: payload.name })
+        body: JSON.stringify({ type: 'inquiry', site_id: payload.site_id, name: payload.name, client_email: payload.email })
       }).catch(function () {});
     })
     .then(function () {

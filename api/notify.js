@@ -26,7 +26,7 @@ export default async function handler(req, res) {
     const novu = new Novu({ secretKey });
 
     await novu.trigger({
-      workflowId: 'custom-in-app-notification',
+      workflowId: 'custom-in-app-notification-e8n0v0bg',
       to: {
         subscriberId: '6a28a9b9b1e12d69cb35660d',
         firstName: 'Astral',

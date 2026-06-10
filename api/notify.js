@@ -1,5 +1,3 @@
-import { Novu } from '@novu/api';
-
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -23,22 +21,35 @@ export default async function handler(req, res) {
     : 'A new submission just came in';
 
   try {
-    const novu = new Novu({ secretKey });
-
-    await novu.trigger({
-      workflowId: 'custom-in-app-notification-e8n0v0bg',
-      to: {
-        subscriberId: '6a28a9b9b1e12d69cb35660d',
-        firstName: 'Astral',
-        lastName: 'Ochoa',
-        email: 'astral.ochoa@hotmail.com'
+    const response = await fetch('https://api.novu.co/v1/events/trigger', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `ApiKey ${secretKey}`
       },
-      payload: { subject, body }
+      body: JSON.stringify({
+        name: 'custom-in-app-notification-e8n0v0bg',
+        to: {
+          subscriberId: '6a28a9b9b1e12d69cb35660d',
+          firstName: 'Astral',
+          lastName: 'Ochoa',
+          email: 'astral.ochoa@hotmail.com'
+        },
+        payload: { subject, body }
+      })
     });
 
+    const result = await response.json();
+
+    if (!response.ok) {
+      console.error('Novu error full:', JSON.stringify(result));
+      return res.status(200).json({ ok: true, warning: 'notification failed', detail: result });
+    }
+
+    console.log('Novu success:', JSON.stringify(result));
     return res.status(200).json({ ok: true });
   } catch (err) {
-    console.error('Novu error:', err);
+    console.error('Notify fetch error:', err.message);
     return res.status(200).json({ ok: true, warning: 'notification failed' });
   }
 }

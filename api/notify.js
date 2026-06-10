@@ -68,7 +68,7 @@ async function sendEmail(subject, body, name, service_type, type) {
       'Authorization': `Bearer ${apiKey}`
     },
     body: JSON.stringify({
-      from: 'Lustre Studio <hello@heleuto.resend.app>',
+      from: 'Lustre Studio <onboarding@resend.dev>',
       to: ['astral.ochoa@hotmail.com'],
       subject: `Lustre Studio — ${subject}`,
       html

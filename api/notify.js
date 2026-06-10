@@ -1,14 +1,12 @@
+import { Novu } from '@novu/api';
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const apiKey = process.env.NOVU_API_KEY;
-  const workflowId = process.env.NOVU_WORKFLOW_ID;
-  const subscriberId = process.env.NOVU_SUBSCRIBER_ID;
-
-  if (!apiKey || !workflowId || !subscriberId) {
-    // Notifications not configured — non-fatal, submission already saved
+  const secretKey = process.env.NOVU_SECRET_KEY;
+  if (!secretKey) {
     return res.status(200).json({ ok: true, skipped: true });
   }
 
@@ -25,28 +23,22 @@ export default async function handler(req, res) {
     : 'A new submission just came in';
 
   try {
-    const response = await fetch('https://api.novu.co/v1/events/trigger', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `ApiKey ${apiKey}`
-      },
-      body: JSON.stringify({
-        name: workflowId,
-        to: { subscriberId },
-        payload: { subject, body, type, site_id, name, service_type }
-      })
-    });
+    const novu = new Novu({ secretKey });
 
-    const result = await response.json();
-    if (!response.ok) {
-      console.error('Novu error:', result);
-      return res.status(200).json({ ok: true, warning: 'notification failed' });
-    }
+    await novu.trigger({
+      workflowId: 'custom-in-app-notification',
+      to: {
+        subscriberId: '6a28a9b9b1e12d69cb35660d',
+        firstName: 'Astral',
+        lastName: 'Ochoa',
+        email: 'astral.ochoa@hotmail.com'
+      },
+      payload: { subject, body }
+    });
 
     return res.status(200).json({ ok: true });
   } catch (err) {
-    console.error('Notify error:', err);
+    console.error('Novu error:', err);
     return res.status(200).json({ ok: true, warning: 'notification failed' });
   }
 }

@@ -1,0 +1,9 @@
+{
+  "name": "astral-test-dashboard",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@novu/api": "^2.6.3"
+  }
+}

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Submissions · Lustre Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Hanken+Grotesk:wght@300;400;500;600&family=Space+Mono:wght@400&display=swap" rel="stylesheet" />
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --cream: #F8F2EC; --paper: #FDFAF6;
+  --ink: #2B2025; --ink-2: #6E5E64; --ink-3: #A99CA1;
+  --line: rgba(43,32,37,0.12); --plum: #743A57; --plum-deep: #5A2942;
+  --rose: #CE93A8; --blush: #EAD3DC; --gold: #B28A53;
+}
+body { background: var(--cream); color: var(--ink); font-family: 'Hanken Grotesk', sans-serif; font-size: 15px; min-height: 100vh; }
+
+/* login */
+.login-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+.login-box { background: var(--paper); border: 1px solid var(--line); border-radius: 18px; padding: 40px 36px; width: 100%; max-width: 380px; text-align: center; }
+.login-logo { font-family: 'Cormorant Garamond', serif; font-size: 34px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+.login-sub { font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 32px; }
+.login-box label { display: block; text-align: left; font-size: 12px; font-weight: 600; color: var(--ink-2); margin-bottom: 6px; }
+.login-box input { width: 100%; padding: 11px 14px; border: 1px solid var(--line); border-radius: 10px; font-family: 'Hanken Grotesk', sans-serif; font-size: 15px; outline: none; background: #fff; color: var(--ink); transition: border-color 0.18s; }
+.login-box input:focus { border-color: var(--plum); }
+.login-btn { margin-top: 16px; width: 100%; padding: 13px; background: var(--plum); color: var(--cream); border: none; border-radius: 100px; font-family: 'Hanken Grotesk', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.18s; }
+.login-btn:hover { background: var(--plum-deep); }
+.login-error { margin-top: 12px; font-size: 13px; color: #c0392b; display: none; }
+
+/* dashboard */
+.dash { display: none; }
+.dash-nav { background: var(--ink); color: var(--cream); padding: 0 32px; height: 60px; display: flex; align-items: center; justify-content: space-between; }
+.dash-nav .brand { font-family: 'Cormorant Garamond', serif; font-size: 22px; }
+.dash-nav .logout { background: none; border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.7); padding: 6px 14px; border-radius: 100px; font-size: 12px; cursor: pointer; font-family: 'Hanken Grotesk', sans-serif; transition: all 0.18s; }
+.dash-nav .logout:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+.dash-body { padding: 32px; }
+.dash-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
+.dash-title { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 500; }
+.dash-count { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--ink-3); margin-top: 2px; }
+.btn-csv { display: inline-flex; align-items: center; gap: 7px; padding: 10px 20px; background: var(--plum); color: var(--cream); border: none; border-radius: 100px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Hanken Grotesk', sans-serif; transition: background 0.18s; text-decoration: none; }
+.btn-csv:hover { background: var(--plum-deep); }
+.btn-csv svg { width: 14px; height: 14px; }
+
+/* table */
+.table-wrap { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.tbl thead { background: var(--cream); }
+.tbl th { padding: 13px 16px; text-align: left; font-family: 'Space Mono', monospace; font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); font-weight: 400; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.tbl td { padding: 13px 16px; border-bottom: 1px solid var(--line); vertical-align: top; color: var(--ink); max-width: 200px; }
+.tbl tr:last-child td { border-bottom: none; }
+.tbl tr:hover td { background: var(--cream); }
+.td-name { font-weight: 600; }
+.td-services { color: var(--plum); font-weight: 500; }
+.td-date { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--ink-3); white-space: nowrap; }
+.badge { display: inline-block; padding: 3px 9px; border-radius: 100px; font-size: 11px; font-weight: 600; }
+.badge-new { background: var(--blush); color: var(--plum-deep); }
+.badge-done { background: #d4edda; color: #1a5c2a; }
+.td-wrap { max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.empty { text-align: center; padding: 60px 24px; color: var(--ink-3); font-size: 15px; }
+.loading { text-align: center; padding: 60px 24px; color: var(--ink-3); }
+
+@media (max-width: 900px) {
+  .dash-body { padding: 20px 16px; }
+  .table-wrap { overflow-x: auto; }
+  .tbl { min-width: 860px; }
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-wrap" id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">Lustre</div>
+    <div class="login-sub">Studio Dashboard</div>
+    <label for="pwd">Password</label>
+    <input type="password" id="pwd" placeholder="Enter password" autocomplete="current-password" />
+    <button class="login-btn" onclick="login()">Sign in</button>
+    <div class="login-error" id="loginError">Incorrect password. Try again.</div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="dash" id="dashboard">
+  <nav class="dash-nav">
+    <span class="brand">Lustre</span>
+    <button class="logout" onclick="logout()">Sign out</button>
+  </nav>
+  <div class="dash-body">
+    <div class="dash-header">
+      <div>
+        <div class="dash-title">Submissions</div>
+        <div class="dash-count" id="subCount"></div>
+      </div>
+      <button class="btn-csv" onclick="downloadCSV()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download CSV
+      </button>
+    </div>
+    <div class="table-wrap">
+      <div class="loading" id="tableLoading">Loading submissions…</div>
+      <table class="tbl" id="subTable" style="display:none">
+        <thead>
+          <tr>
+            <th>Date submitted</th>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Email</th>
+            <th>Services requested</th>
+            <th>Preferred date</th>
+            <th>Preferred stylist</th>
+            <th>Special requests</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="subBody"></tbody>
+      </table>
+      <div class="empty" id="tableEmpty" style="display:none">No submissions yet.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  var PASSWORD_KEY = 'lustre_dash_pwd';
+  var submissions = [];
+
+  function login() {
+    var pwd = document.getElementById('pwd').value.trim();
+    if (!pwd) return;
+    fetch('/api/submissions', {
+      headers: { 'x-dashboard-password': pwd }
+    })
+    .then(function(r) {
+      if (r.status === 401) throw new Error('unauthorized');
+      if (!r.ok) throw new Error('server error');
+      return r.json();
+    })
+    .then(function(data) {
+      sessionStorage.setItem(PASSWORD_KEY, pwd);
+      submissions = data;
+      showDashboard(data);
+    })
+    .catch(function(err) {
+      var errEl = document.getElementById('loginError');
+      errEl.textContent = err.message === 'unauthorized' ? 'Incorrect password. Try again.' : 'Something went wrong. Please try again.';
+      errEl.style.display = 'block';
+    });
+  }
+
+  function logout() {
+    sessionStorage.removeItem(PASSWORD_KEY);
+    document.getElementById('dashboard').style.display = 'none';
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('pwd').value = '';
+  }
+
+  function showDashboard(data) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    document.getElementById('tableLoading').style.display = 'none';
+    renderTable(data);
+  }
+
+  function fmt(dateStr) {
+    if (!dateStr) return '—';
+    var d = new Date(dateStr);
+    return d.toLocaleDateString('en-TT', { day: 'numeric', month: 'short', year: 'numeric' })
+      + ' ' + d.toLocaleTimeString('en-TT', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  function esc(s) {
+    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function detail(row, key) {
+    try { return (row.details && row.details[key]) || ''; } catch(e) { return ''; }
+  }
+
+  function renderTable(data) {
+    var count = document.getElementById('subCount');
+    count.textContent = data.length + ' submission' + (data.length !== 1 ? 's' : '');
+
+    if (data.length === 0) {
+      document.getElementById('tableEmpty').style.display = 'block';
+      return;
+    }
+
+    document.getElementById('subTable').style.display = 'table';
+    var tbody = document.getElementById('subBody');
+    tbody.innerHTML = '';
+
+    data.forEach(function(row) {
+      var tr = document.createElement('tr');
+      var status = row.status || 'new';
+      var badgeCls = status === 'done' ? 'badge badge-done' : 'badge badge-new';
+
+      tr.innerHTML = '<td class="td-date">' + esc(fmt(row.created_at)) + '</td>'
+        + '<td class="td-name">' + esc(row.name || '—') + '</td>'
+        + '<td>' + esc(row.phone || '—') + '</td>'
+        + '<td class="td-wrap">' + esc(row.email || '—') + '</td>'
+        + '<td class="td-services td-wrap">' + esc(row.service_type || '—') + '</td>'
+        + '<td>' + esc(detail(row, 'date') || '—') + '</td>'
+        + '<td>' + esc(detail(row, 'stylist') || '—') + '</td>'
+        + '<td class="td-wrap">' + esc(row.message || detail(row, 'notes') || '—') + '</td>'
+        + '<td><span class="' + badgeCls + '">' + esc(status) + '</span></td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  function downloadCSV() {
+    if (!submissions.length) return;
+    var headers = ['Date submitted','Name','Phone','Email','Services requested','Preferred date','Preferred stylist','Special requests','Status'];
+    var rows = submissions.map(function(row) {
+      return [
+        fmt(row.created_at),
+        row.name || '',
+        row.phone || '',
+        row.email || '',
+        row.service_type || '',
+        detail(row, 'date') || '',
+        detail(row, 'stylist') || '',
+        row.message || detail(row, 'notes') || '',
+        row.status || 'new'
+      ].map(function(v) { return '"' + String(v).replace(/"/g, '""') + '"'; }).join(',');
+    });
+    var csv = [headers.join(',')].concat(rows).join('\n');
+    var blob = new Blob([csv], { type: 'text/csv' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'lustre-submissions-' + new Date().toISOString().slice(0,10) + '.csv';
+    a.click();
+  }
+
+  // auto-login if password saved in session
+  document.getElementById('pwd').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') login();
+  });
+  (function() {
+    var saved = sessionStorage.getItem(PASSWORD_KEY);
+    if (saved) {
+      fetch('/api/submissions', { headers: { 'x-dashboard-password': saved } })
+        .then(function(r) { return r.ok ? r.json() : Promise.reject(); })
+        .then(function(data) { submissions = data; showDashboard(data); })
+        .catch(function() { sessionStorage.removeItem(PASSWORD_KEY); });
+    }
+  })();
+</script>
+</body>
+</html>

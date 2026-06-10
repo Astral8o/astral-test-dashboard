@@ -75,8 +75,10 @@ async function sendEmail(subject, body, name, service_type, type) {
     })
   });
 
+  const result = await response.json();
   if (!response.ok) {
-    const result = await response.json();
-    console.error('Resend error:', JSON.stringify(result));
+    console.error(`Resend error ${response.status}:`, JSON.stringify(result));
+  } else {
+    console.log('Resend success:', JSON.stringify(result));
   }
 }

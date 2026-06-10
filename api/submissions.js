@@ -2,6 +2,7 @@ export default async function handler(req, res) {
   if (req.method !== 'GET') return res.status(405).end();
 
   const pwd = req.headers['x-dashboard-password'];
+  console.log('pwd_len:', pwd ? pwd.length : 0, 'env_len:', process.env.DASHBOARD_PASSWORD ? process.env.DASHBOARD_PASSWORD.length : 0, 'env_set:', !!process.env.DASHBOARD_PASSWORD);
   if (!pwd || pwd !== process.env.DASHBOARD_PASSWORD) {
     return res.status(401).json({ error: 'Unauthorized' });
   }

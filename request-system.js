@@ -187,6 +187,13 @@
 
   function openDrawer() {
     if (!drawer) buildDrawer();
+    // Reset confirm state so drawer is reusable
+    var body = drawer.querySelector('.rs-body');
+    var confirm = drawer.querySelector('.rs-confirm');
+    var submitBtn = drawer.querySelector('.rs-submit');
+    if (body) body.style.display = '';
+    if (confirm) confirm.style.display = 'none';
+    if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = CFG.submitLabel || 'Send booking request'; }
     refreshCart();
     overlay.classList.add('rs-open');
     drawer.classList.add('rs-open');
